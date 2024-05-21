@@ -1,10 +1,12 @@
 package jag.inventarios.controlador;
 
+import jag.inventarios.excepcion.RecursoNoEncontradoExcepcion;
 import jag.inventarios.modelo.Producto;
 import jag.inventarios.servicio.ProductoServicio;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,5 +36,18 @@ public class ProductoControlador {
     public Producto agregarProducto(@RequestBody Producto producto){
         logger.info("Producto a agregar: " + producto);
         return this.productoServicio.guardarProducto(producto);
+    }
+
+    @GetMapping("/productos/{id}")
+    public ResponseEntity<Producto> obtenerProductoPorId(
+            @PathVariable int id){
+        Producto producto = this.productoServicio.buscarProductoPorId(id);
+        if(producto != null){
+            return  ResponseEntity.ok(producto);
+        }
+        else {
+            throw new RecursoNoEncontradoExcepcion("No se encontro el id " + id);
+        }
+
     }
 }
